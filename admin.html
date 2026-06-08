@@ -455,6 +455,14 @@ const FORMS = {
       </div>
     </div>
     <div class="field-group">
+      <label class="field-label">Tag (separati da virgola)</label>
+      <input class="field-input" id="f-tags" value="${item.tags||''}" placeholder="es. Raduno dinamico, Passi alpini, Nord Italia"/>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Descrizione</label>
+      <textarea class="field-input" id="f-desc-long" placeholder="Descrivi l&#39;evento..." style="height:120px;padding-top:12px;resize:vertical;">${item.description||''}</textarea>
+    </div>
+    <div class="field-group">
       <label class="field-label">Link evento (opzionale)</label>
       <input class="field-input" id="f-url" value="${item.url||''}" placeholder="https://..."/>
     </div>
@@ -614,8 +622,10 @@ async function saveItem() {
         name:      document.getElementById('f-name').value.trim(),
         city:      document.getElementById('f-city').value.trim(),
         date_text: document.getElementById('f-date-text').value.trim(),
-        date_sort: document.getElementById('f-date-sort').value || null,
-        url:       document.getElementById('f-url').value.trim() || null,
+        date_sort:   document.getElementById('f-date-sort').value || null,
+        url:         document.getElementById('f-url').value.trim() || null,
+        tags:        document.getElementById('f-tags').value.trim() || null,
+        description: document.getElementById('f-desc-long').value.trim() || null,
         active:    document.getElementById('f-active').checked,
       };
     } else if (editingType === 'giri') {
