@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Drivenode · Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;800&family=Saira:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#0b0b0d; --bg-2:#101013; --surface:#15151a; --surface-2:#1b1b21;
+    --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.14);
+    --txt:#f3f3f5; --txt-dim:#9a9aa3; --txt-faint:#6b6b73;
+    --accent:#ec3b24; --accent-line:rgba(236,59,36,.38);
+    --green:#22c55e; --red:#ef4444;
+    --radius:14px;
+    --head:'Saira Condensed',system-ui,sans-serif;
+    --body:'Saira',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--txt);font-family:var(--body);-webkit-font-smoothing:antialiased;min-height:100vh;}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  input,textarea,select{font-family:var(--body);}
+
+  /* ── layout ── */
+  .topbar{
+    background:var(--surface);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 24px;height:56px;position:sticky;top:0;z-index:100;
+  }
+  .topbar-brand{font-family:var(--head);font-weight:800;font-size:22px;text-transform:uppercase;letter-spacing:.03em;}
+  .topbar-brand span{color:var(--accent);}
+  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .badge-admin{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);background:rgba(236,59,36,.12);padding:4px 10px;border-radius:999px;border:1px solid var(--accent-line);}
+
+  .page{max-width:860px;margin:0 auto;padding:32px 20px 80px;}
+
+  /* ── login ── */
+  #login-screen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(80% 60% at 50% 0%,rgba(236,59,36,.12),transparent 60%),var(--bg);
+  }
+  .login-box{
+    width:100%;max-width:380px;
+    background:var(--surface);border:1px solid var(--line);border-radius:20px;
+    padding:36px 28px;text-align:center;
+  }
+  .login-title{font-family:var(--head);font-weight:800;font-size:32px;text-transform:uppercase;margin-bottom:6px;}
+  .login-title span{color:var(--accent);}
+  .login-sub{font-size:13.5px;color:var(--txt-dim);margin-bottom:28px;}
+  .login-err{font-size:13px;color:var(--red);margin-top:10px;display:none;}
+
+  /* ── tabs ── */
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:28px;}
+  .tab{
+    padding:10px 18px;font-size:13.5px;font-weight:600;letter-spacing:.04em;
+    cursor:pointer;border-bottom:2px solid transparent;color:var(--txt-dim);
+    transition:color .15s,border-color .15s;
+  }
+  .tab.active{color:var(--txt);border-bottom-color:var(--accent);}
+
+  /* ── section header ── */
+  .sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+  .sec-label{font-family:var(--head);font-weight:800;font-size:24px;text-transform:uppercase;}
+
+  /* ── cards grid ── */
+  .cards{display:grid;gap:12px;}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    display:flex;align-items:center;gap:14px;padding:12px 14px;
+    transition:border-color .15s;
+  }
+  .card:hover{border-color:var(--line-strong);}
+  .card-thumb{
+    width:52px;height:52px;border-radius:10px;flex:none;overflow:hidden;
+    background:var(--surface-2);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .card-thumb img{width:100%;height:100%;object-fit:cover;}
+  .card-body{flex:1;min-width:0;}
+  .card-title{font-family:var(--head);font-weight:700;font-size:17px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card-meta{font-size:12px;color:var(--txt-dim);margin-top:2px;}
+  .card-actions{display:flex;gap:8px;flex:none;}
+
+  /* ── buttons ── */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    height:42px;padding:0 18px;border-radius:10px;border:none;cursor:pointer;
+    font-family:var(--body);font-size:14px;font-weight:600;letter-spacing:.02em;
+    transition:filter .15s,transform .15s,opacity .15s;
+  }
+  .btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-ghost{background:var(--surface-2);color:var(--txt);border:1px solid var(--line-strong);}
+  .btn-icon{width:34px;height:34px;padding:0;border-radius:8px;}
+  .btn-danger{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+  .btn-danger:hover{background:rgba(239,68,68,.22);filter:none;}
+  .btn-sm{height:34px;padding:0 12px;font-size:13px;}
+  .btn svg{width:16px;height:16px;}
+  .btn[disabled]{opacity:.45;pointer-events:none;}
+
+  /* ── forms ── */
+  .field-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+  .field-label{font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-dim);}
+  .field-input{
+    width:100%;height:46px;border-radius:10px;border:1px solid var(--line-strong);
+    background:var(--bg);color:var(--txt);padding:0 14px;font-size:14.5px;outline:none;
+    transition:border-color .15s;
+  }
+  .field-input:focus{border-color:var(--accent-line);}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:500px){.field-row{grid-template-columns:1fr;}}
+
+  /* ── image upload ── */
+  .upload-zone{
+    border:2px dashed var(--line-strong);border-radius:12px;padding:24px;
+    text-align:center;cursor:pointer;transition:border-color .15s,background .15s;
+    background:var(--surface-2);position:relative;
+  }
+  .upload-zone:hover,.upload-zone.drag{border-color:var(--accent-line);background:rgba(236,59,36,.04);}
+  .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .upload-icon{width:36px;height:36px;margin:0 auto 10px;color:var(--txt-faint);}
+  .upload-label{font-size:13.5px;color:var(--txt-dim);}
+  .upload-label b{color:var(--accent);}
+  .upload-preview{
+    width:100%;aspect-ratio:16/9;border-radius:10px;object-fit:cover;
+    border:1px solid var(--line);margin-top:12px;display:none;
+  }
+  .upload-preview.show{display:block;}
+  .upload-remove{display:none;margin-top:8px;}
+  .upload-remove.show{display:inline-flex;}
+
+  /* ── modal ── */
+  .overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);
+    z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;
+    opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .overlay.open{opacity:1;pointer-events:all;}
+  .modal{
+    background:var(--surface);border:1px solid var(--line-strong);border-radius:20px;
+    width:100%;max-width:520px;max-height:92vh;overflow-y:auto;
+    padding:28px 24px;
+    transform:translateY(16px);transition:transform .2s;
+  }
+  .overlay.open .modal{transform:translateY(0);}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .modal-title{font-family:var(--head);font-weight:800;font-size:22px;text-transform:uppercase;}
+  .modal-close{width:34px;height:34px;border-radius:8px;border:1px solid var(--line-strong);background:var(--surface-2);display:grid;place-items:center;cursor:pointer;color:var(--txt-dim);flex:none;}
+  .modal-close:hover{color:var(--txt);}
+  .modal-footer{display:flex;gap:10px;margin-top:24px;justify-content:flex-end;}
+
+  /* ── toggle ── */
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;}
+  .toggle-label{font-size:14px;color:var(--txt-dim);}
+  .toggle{position:relative;width:44px;height:24px;flex:none;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle-track{position:absolute;inset:0;background:var(--surface-2);border:1px solid var(--line-strong);border-radius:999px;cursor:pointer;transition:background .15s;}
+  .toggle input:checked + .toggle-track{background:var(--accent);border-color:var(--accent);}
+  .toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .15s;}
+  .toggle input:checked ~ .toggle-thumb{transform:translateX(20px);}
+
+  /* ── toast ── */
+  #toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+    background:var(--surface);border:1px solid var(--line-strong);border-radius:12px;
+    padding:12px 20px;font-size:14px;font-weight:600;z-index:300;
+    transition:transform .25s;white-space:nowrap;
+  }
+  #toast.show{transform:translateX(-50%) translateY(0);}
+  #toast.ok{color:var(--green);}
+  #toast.err{color:var(--red);}
+
+  /* ── empty state ── */
+  .empty{text-align:center;padding:40px 20px;color:var(--txt-faint);font-size:14px;}
+  .empty svg{width:40px;height:40px;margin:0 auto 12px;opacity:.3;}
+
+  /* ── config box ── */
+  .config-box{
+    background:var(--surface);border:1px solid var(--accent-line);border-radius:16px;
+    padding:20px;margin-bottom:28px;
+  }
+  .config-box h3{font-family:var(--head);font-size:17px;font-weight:700;text-transform:uppercase;margin-bottom:4px;}
+  .config-box p{font-size:13px;color:var(--txt-dim);margin-bottom:14px;}
+
+  /* spinner */
+  .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-title">DRIVE<span>NODE</span></div>
+    <p class="login-sub">Accedi al pannello di amministrazione</p>
+    <div class="field-group">
+      <label class="field-label">Email</label>
+      <input class="field-input" id="login-email" type="email" placeholder="admin@drivenode.it" autocomplete="username"/>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Password</label>
+      <input class="field-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px;" id="login-btn" onclick="doLogin()">
+      Accedi
+    </button>
+    <p class="login-err" id="login-err">Email o password errati.</p>
+  </div>
+</div>
+
+<!-- ADMIN APP (hidden until logged in) -->
+<div id="app" style="display:none;">
+  <div class="topbar">
+    <div class="topbar-brand">DRIVE<span>NODE</span></div>
+    <div class="topbar-right">
+      <span class="badge-admin">Admin</span>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Esci</button>
+    </div>
+  </div>
+
+  <div class="page">
+    <!-- tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('eventi',this)">🗓 Eventi</div>
+      <div class="tab" onclick="switchTab('giri',this)">🛣 Giri</div>
+      <div class="tab" onclick="switchTab('partner',this)">🤝 Partner</div>
+      <div class="tab" onclick="switchTab('config',this)">⚙️ Impostazioni</div>
+    </div>
+
+    <!-- EVENTI TAB -->
+    <div id="tab-eventi">
+      <div class="sec-row">
+        <span class="sec-label">Eventi</span>
+        <button class="btn btn-primary btn-sm" onclick="openModal('event')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi evento
+        </button>
+      </div>
+      <div class="cards" id="events-list"></div>
+    </div>
+
+    <!-- GIRI TAB -->
+    <div id="tab-giri" style="display:none;">
+      <div class="sec-row">
+        <span class="sec-label">Giri consigliati</span>
+        <button class="btn btn-primary btn-sm" onclick="openModal('giro')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi giro
+        </button>
+      </div>
+      <div class="cards" id="giri-list"></div>
+    </div>
+
+    <!-- PARTNER TAB -->
+    <div id="tab-partner" style="display:none;">
+      <div class="sec-row">
+        <span class="sec-label">Partner</span>
+        <button class="btn btn-primary btn-sm" onclick="openModal('partner')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Aggiungi partner
+        </button>
+      </div>
+      <div class="cards" id="partner-list"></div>
+    </div>
+
+    <!-- CONFIG TAB -->
+    <div id="tab-config" style="display:none;">
+      <div class="sec-label" style="margin-bottom:20px;">Impostazioni generali</div>
+      <div class="config-box">
+        <h3>Raduno in evidenza</h3>
+        <p>Modifica i dettagli del raduno mostrato nella sezione "Ci vediamo in pista".</p>
+        <div class="field-group">
+          <label class="field-label">Data raduno</label>
+          <input class="field-input" id="cfg-date" placeholder="es. 7 Giugno 2026"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Luogo raduno</label>
+          <input class="field-input" id="cfg-place" placeholder="es. Fiammetta Beach · Varese (VA)"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Titolo raduno</label>
+          <input class="field-input" id="cfg-title" placeholder="es. Ci vediamo\nin pista."/>
+        </div>
+      </div>
+      <div class="config-box">
+        <h3>Avatar / Logo hero</h3>
+        <p>Immagine rotonda mostrata in cima alla pagina principale.</p>
+        <div class="upload-zone" id="upload-avatar">
+          <input type="file" accept="image/*" onchange="previewUpload(this,'prev-avatar','remove-avatar')"/>
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m-4 4 4-4 4 4"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+          <div class="upload-label">Clicca o trascina un'immagine</div>
+          <img id="prev-avatar" class="upload-preview"/>
+        </div>
+        <button class="btn btn-ghost btn-sm upload-remove" id="remove-avatar" onclick="removeUpload('prev-avatar','remove-avatar','upload-avatar-file')">✕ Rimuovi</button>
+      </div>
+      <button class="btn btn-primary" onclick="saveConfig()">Salva impostazioni</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title">Aggiungi</span>
+      <div class="modal-close" onclick="closeModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </div>
+    </div>
+    <div id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Annulla</button>
+      <button class="btn btn-primary" id="modal-save" onclick="saveItem()">Salva</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+// ── supabase client ──
+let sb;
+try { sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e){}
+
+// ── state ──
+let currentTab = 'eventi';
+let editingId   = null;
+let editingType = null;
+let pendingFile = null;
+
+// ── auth ──
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const btn   = document.getElementById('login-btn');
+  const err   = document.getElementById('login-err');
+  err.style.display = 'none';
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+  try {
+    const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) throw error;
+    showApp();
+  } catch(e) {
+    err.textContent = e.message || 'Errore di accesso.';
+    err.style.display = 'block';
+    btn.innerHTML = 'Accedi';
+    btn.disabled = false;
+  }
+}
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+async function doLogout() {
+  await sb.auth.signOut();
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+async function checkSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) showApp();
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadTab('eventi');
+  loadConfig();
+}
+
+// ── tabs ──
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['eventi','giri','partner','config'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+  });
+  currentTab = name;
+  if (name !== 'config') loadTab(name);
+}
+
+async function loadTab(tab) {
+  const tableMap = { eventi:'events', giri:'giri', partner:'partners' };
+  const listMap  = { eventi:'events-list', giri:'giri-list', partner:'partner-list' };
+  const table    = tableMap[tab];
+  const listEl   = document.getElementById(listMap[tab]);
+  if (!table || !listEl) return;
+  listEl.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Caricamento…</div>';
+  const { data, error } = await sb.from(table).select('*').order(tab === 'eventi' ? 'date_sort' : 'sort_order', { ascending: true });
+  if (error) { toast('Errore caricamento dati', 'err'); return; }
+  if (!data?.length) {
+    listEl.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>Nessun elemento. Aggiungine uno!</div>';
+    return;
+  }
+  listEl.innerHTML = data.map(item => renderCard(tab, item)).join('');
+}
+
+// ── card rendering ──
+function renderCard(tab, item) {
+  const thumb = item.image_url
+    ? `<img src="${item.image_url}" alt="">`
+    : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--txt-faint);opacity:.4;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`;
+  let title='', meta='';
+  if (tab==='eventi') { title=item.name; meta=`${item.city} · ${item.date_text}`; }
+  else if (tab==='giri') { title=item.name; meta=item.duration; }
+  else { title=item.name; meta=`${item.tag} · ${item.description}`; }
+
+  const activeColor = item.active ? 'var(--green)' : 'var(--txt-faint)';
+  return `
+    <div class="card" id="card-${item.id}">
+      <div class="card-thumb">${thumb}</div>
+      <div class="card-body">
+        <div class="card-title">${title}</div>
+        <div class="card-meta" style="color:${activeColor};">${item.active ? '● Visibile' : '○ Nascosto'} · ${meta}</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-ghost btn-icon btn-sm" title="Modifica" onclick="openModal('${tab}',${JSON.stringify(item).replace(/"/g,'&quot;')})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="btn btn-danger btn-icon btn-sm" title="Elimina" onclick="deleteItem('${tab}','${item.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+    </div>`;
+}
+
+// ── modal ──
+const FORMS = {
+  eventi: (item={}) => `
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Nome evento *</label>
+        <input class="field-input" id="f-name" value="${item.name||''}" placeholder="es. Raduno Drivenode"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Città *</label>
+        <input class="field-input" id="f-city" value="${item.city||''}" placeholder="es. Varese"/>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Data visualizzata *</label>
+        <input class="field-input" id="f-date-text" value="${item.date_text||''}" placeholder="es. 7 Giu"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Data per ordinamento</label>
+        <input class="field-input" id="f-date-sort" type="date" value="${item.date_sort||''}"/>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Link evento (opzionale)</label>
+      <input class="field-input" id="f-url" value="${item.url||''}" placeholder="https://..."/>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Immagine / Locandina</label>
+      <div class="upload-zone" id="modal-upload-zone">
+        <input type="file" accept="image/*" onchange="previewUpload(this,'modal-prev','modal-remove')"/>
+        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m-4 4 4-4 4 4"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+        <div class="upload-label">Clicca o trascina · <b>JPG, PNG, WEBP</b></div>
+        ${item.image_url ? `<img id="modal-prev" class="upload-preview show" src="${item.image_url}" alt="">` : `<img id="modal-prev" class="upload-preview"/>`}
+      </div>
+      ${item.image_url ? `<button class="btn btn-ghost btn-sm upload-remove show" id="modal-remove" onclick="removeUpload('modal-prev','modal-remove')">✕ Rimuovi immagine</button>` : `<button class="btn btn-ghost btn-sm upload-remove" id="modal-remove" onclick="removeUpload('modal-prev','modal-remove')">✕ Rimuovi immagine</button>`}
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">Visibile sul sito</span>
+      <label class="toggle">
+        <input type="checkbox" id="f-active" ${item.active !== false ? 'checked' : ''}/>
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>`,
+
+  giri: (item={}) => `
+    <div class="field-group">
+      <label class="field-label">Nome percorso *</label>
+      <input class="field-input" id="f-name" value="${item.name||''}" placeholder="es. Passo del Tonale"/>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Durata stimata *</label>
+      <input class="field-input" id="f-duration" value="${item.duration||''}" placeholder="es. 3h30 circa"/>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Foto percorso</label>
+      <div class="upload-zone" id="modal-upload-zone">
+        <input type="file" accept="image/*" onchange="previewUpload(this,'modal-prev','modal-remove')"/>
+        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m-4 4 4-4 4 4"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+        <div class="upload-label">Clicca o trascina · <b>JPG, PNG, WEBP</b></div>
+        ${item.image_url ? `<img id="modal-prev" class="upload-preview show" src="${item.image_url}" alt="">` : `<img id="modal-prev" class="upload-preview"/>`}
+      </div>
+      ${item.image_url ? `<button class="btn btn-ghost btn-sm upload-remove show" id="modal-remove" onclick="removeUpload('modal-prev','modal-remove')">✕ Rimuovi immagine</button>` : `<button class="btn btn-ghost btn-sm upload-remove" id="modal-remove" onclick="removeUpload('modal-prev','modal-remove')">✕ Rimuovi immagine</button>`}
+    </div>
+    <div class="field-group">
+      <label class="field-label">Ordine visualizzazione</label>
+      <input class="field-input" id="f-sort" type="number" value="${item.sort_order||0}" min="0"/>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">Visibile sul sito</span>
+      <label class="toggle">
+        <input type="checkbox" id="f-active" ${item.active !== false ? 'checked' : ''}/>
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>`,
+
+  partner: (item={}) => `
+    <div class="field-group">
+      <label class="field-label">Nome partner *</label>
+      <input class="field-input" id="f-name" value="${item.name||''}" placeholder="es. So-Synergy"/>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Tag / categoria *</label>
+        <input class="field-input" id="f-tag" value="${item.tag||''}" placeholder="es. Innovation"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Descrizione breve *</label>
+        <input class="field-input" id="f-desc" value="${item.description||''}" placeholder="es. Stampa 3D, NFC"/>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Logo partner</label>
+      <div class="upload-zone" id="modal-upload-zone">
+        <input type="file" accept="image/*" onchange="previewUpload(this,'modal-prev','modal-remove')"/>
+        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m-4 4 4-4 4 4"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+        <div class="upload-label">Clicca o trascina · <b>JPG, PNG, WEBP</b></div>
+        ${item.logo_url ? `<img id="modal-prev" class="upload-preview show" src="${item.logo_url}" alt="">` : `<img id="modal-prev" class="upload-preview"/>`}
+      </div>
+      ${item.logo_url ? `<button class="btn btn-ghost btn-sm upload-remove show" id="modal-remove" onclick="removeUpload('modal-prev','modal-remove')">✕ Rimuovi logo</button>` : `<button class="btn btn-ghost btn-sm upload-remove" id="modal-remove" onclick="removeUpload('modal-prev','modal-remove')">✕ Rimuovi logo</button>`}
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-label">Visibile sul sito</span>
+      <label class="toggle">
+        <input type="checkbox" id="f-active" ${item.active !== false ? 'checked' : ''}/>
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>`,
+};
+
+function openModal(type, item={}) {
+  const titles = { eventi:'Evento', giri:'Giro', partner:'Partner' };
+  editingType = type;
+  editingId   = item.id || null;
+  pendingFile = null;
+  document.getElementById('modal-title').textContent = (editingId ? 'Modifica ' : 'Aggiungi ') + titles[type];
+  document.getElementById('modal-body').innerHTML = FORMS[type](item);
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  editingId = editingType = null;
+  pendingFile = null;
+}
+function closeModalOutside(e) { if(e.target === document.getElementById('modal-overlay')) closeModal(); }
+
+// ── upload preview ──
+function previewUpload(input, prevId, removeId) {
+  const file = input.files[0];
+  if (!file) return;
+  pendingFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById(prevId);
+    if (prev) { prev.src = e.target.result; prev.classList.add('show'); }
+    const rem = document.getElementById(removeId);
+    if (rem) rem.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeUpload(prevId, removeId) {
+  pendingFile = null;
+  const prev = document.getElementById(prevId);
+  if (prev) { prev.src = ''; prev.classList.remove('show'); }
+  const rem = document.getElementById(removeId);
+  if (rem) rem.classList.remove('show');
+}
+
+// ── save ──
+async function saveItem() {
+  const btn = document.getElementById('modal-save');
+  btn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+
+  try {
+    let imageUrl = null;
+
+    // upload image if selected
+    if (pendingFile) {
+      const ext  = pendingFile.name.split('.').pop();
+      const path = `${editingType}/${Date.now()}.${ext}`;
+      const { error: upErr } = await sb.storage.from('images').upload(path, pendingFile, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: { publicUrl } } = sb.storage.from('images').getPublicUrl(path);
+      imageUrl = publicUrl;
+    }
+
+    const tableMap = { eventi:'events', giri:'giri', partner:'partners' };
+    const table = tableMap[editingType];
+    let payload = {};
+
+    if (editingType === 'eventi') {
+      payload = {
+        name:      document.getElementById('f-name').value.trim(),
+        city:      document.getElementById('f-city').value.trim(),
+        date_text: document.getElementById('f-date-text').value.trim(),
+        date_sort: document.getElementById('f-date-sort').value || null,
+        url:       document.getElementById('f-url').value.trim() || null,
+        active:    document.getElementById('f-active').checked,
+      };
+    } else if (editingType === 'giri') {
+      payload = {
+        name:       document.getElementById('f-name').value.trim(),
+        duration:   document.getElementById('f-duration').value.trim(),
+        sort_order: parseInt(document.getElementById('f-sort').value) || 0,
+        active:     document.getElementById('f-active').checked,
+      };
+    } else {
+      payload = {
+        name:   document.getElementById('f-name').value.trim(),
+        tag:    document.getElementById('f-tag').value.trim(),
+        description: document.getElementById('f-desc').value.trim(),
+        active: document.getElementById('f-active').checked,
+      };
+    }
+
+    if (!payload.name) throw new Error('Il nome è obbligatorio.');
+    if (imageUrl) {
+      payload[editingType === 'partner' ? 'logo_url' : 'image_url'] = imageUrl;
+    }
+
+    if (editingId) {
+      const { error } = await sb.from(table).update(payload).eq('id', editingId);
+      if (error) throw error;
+    } else {
+      const { error } = await sb.from(table).insert(payload);
+      if (error) throw error;
+    }
+
+    closeModal();
+    toast(editingId ? 'Modifiche salvate ✓' : 'Aggiunto con successo ✓', 'ok');
+    loadTab(editingType);
+  } catch(e) {
+    toast(e.message || 'Errore nel salvataggio', 'err');
+  } finally {
+    btn.innerHTML = 'Salva';
+    btn.disabled = false;
+  }
+}
+
+async function deleteItem(tab, id) {
+  if (!confirm('Eliminare questo elemento?')) return;
+  const tableMap = { eventi:'events', giri:'giri', partner:'partners' };
+  const { error } = await sb.from(tableMap[tab]).delete().eq('id', id);
+  if (error) { toast('Errore eliminazione', 'err'); return; }
+  toast('Eliminato', 'ok');
+  loadTab(tab);
+}
+
+// ── config ──
+async function loadConfig() {
+  const { data } = await sb.from('config').select('*').limit(1).maybeSingle();
+  if (!data) return;
+  if (data.raduno_date)  document.getElementById('cfg-date').value  = data.raduno_date;
+  if (data.raduno_place) document.getElementById('cfg-place').value = data.raduno_place;
+  if (data.raduno_title) document.getElementById('cfg-title').value = data.raduno_title;
+  if (data.avatar_url) {
+    const prev = document.getElementById('prev-avatar');
+    if (prev) { prev.src = data.avatar_url; prev.classList.add('show'); }
+  }
+}
+
+async function saveConfig() {
+  let avatarUrl = null;
+  if (pendingFile) {
+    const ext = pendingFile.name.split('.').pop();
+    const path = `config/avatar.${ext}`;
+    await sb.storage.from('images').upload(path, pendingFile, { upsert: true });
+    const { data: { publicUrl } } = sb.storage.from('images').getPublicUrl(path);
+    avatarUrl = publicUrl;
+  }
+  const payload = {
+    raduno_date:  document.getElementById('cfg-date').value.trim(),
+    raduno_place: document.getElementById('cfg-place').value.trim(),
+    raduno_title: document.getElementById('cfg-title').value.trim(),
+  };
+  if (avatarUrl) payload.avatar_url = avatarUrl;
+
+  const { data: existing } = await sb.from('config').select('id').limit(1).maybeSingle();
+  if (existing) {
+    await sb.from('config').update(payload).eq('id', existing.id);
+  } else {
+    await sb.from('config').insert(payload);
+  }
+  toast('Impostazioni salvate ✓', 'ok');
+}
+
+// ── toast ──
+let toastTimer;
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.className = '', 3000);
+}
+
+// ── init ──
+if (sb) checkSession();
+else {
+  document.getElementById('login-screen').innerHTML = `
+    <div style="text-align:center;padding:40px;max-width:420px;margin:auto;">
+      <div style="font-family:var(--head);font-size:28px;font-weight:800;text-transform:uppercase;margin-bottom:16px;">DRIVE<span style="color:var(--accent)">NODE</span> · Admin</div>
+      <p style="color:var(--txt-dim);margin-bottom:20px;">Per usare il pannello admin devi prima configurare Supabase nel file <code style="background:var(--surface);padding:2px 6px;border-radius:4px;">config.js</code>.</p>
+      <a href="https://supabase.com" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;height:44px;padding:0 20px;border-radius:10px;font-weight:600;">Vai su Supabase →</a>
+    </div>`;
+  document.getElementById('login-screen').style.minHeight = '100vh';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-screen').style.alignItems = 'center';
+  document.getElementById('login-screen').style.justifyContent = 'center';
+}
+</script>
+</body>
+</html>
