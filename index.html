@@ -272,6 +272,19 @@
   .foot-credit{margin-top:18px;font-size:11px;color:var(--txt-faint);letter-spacing:.04em;}
   .divider{height:1px;background:var(--line);margin:0;}
 
+  /* OBIETTIVO BUTTON */
+  .obiettivo-btn{
+    width:100%;display:flex;align-items:center;gap:14px;
+    background:rgba(236,59,36,.08);border:1px solid var(--accent-line);border-radius:16px;
+    padding:16px 18px;cursor:pointer;text-align:left;
+    transition:background .15s,transform .15s;
+  }
+  .obiettivo-btn:hover{background:rgba(236,59,36,.14);transform:translateY(-2px);}
+  .obiettivo-icon{font-size:26px;flex:none;}
+  .obiettivo-text{display:flex;flex-direction:column;gap:3px;flex:1;}
+  .obiettivo-title{font-family:var(--head);font-weight:800;font-size:19px;text-transform:uppercase;color:var(--txt);}
+  .obiettivo-sub{font-size:13px;color:var(--accent);font-weight:600;}
+
   /* DETAIL MODAL */
   .det-overlay{
     position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);
@@ -467,20 +480,35 @@
     </section>
 
     <!-- OBIETTIVO -->
-    <section class="mission">
-      <div class="kicker" style="justify-content:center;">Obiettivo Drivenode</div>
-      <h2 class="sec-title">Un'unica<br/>community.</h2>
-      <p>Mettere in connessione chi vive di motori: appassionati, club ed eventi di tutta Italia, raccolti in un solo hub. Niente gruppi dispersi — solo strade, raduni e persone con la stessa passione.</p>
-      <div class="pillars">
-        <span class="pill"><span class="num">01</span>Eventi</span>
-        <span class="pill"><span class="num">02</span>Giri</span>
-        <span class="pill"><span class="num">03</span>Community</span>
-      </div>
-      <a class="btn" href="https://instagram.com/drivenode.official" target="_blank" rel="noopener" style="max-width:300px;margin:0 auto;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-        Seguici su Instagram
-      </a>
+    <section class="sec" style="padding-top:32px;">
+      <button class="obiettivo-btn" onclick="openObiettivo()">
+        <span class="obiettivo-icon">🚀</span>
+        <span class="obiettivo-text">
+          <span class="obiettivo-title">Obiettivo Drivenode!</span>
+          <span class="obiettivo-sub">L'hub Auto e Moto</span>
+        </span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;flex:none;color:var(--accent);"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
     </section>
+
+    <!-- OBIETTIVO MODAL -->
+    <div class="contact-overlay" id="obiettivo-overlay" onclick="closeObiettivoOutside(event)">
+      <div class="contact-card" style="max-width:480px;border-radius:20px;">
+        <div class="contact-head">
+          <span class="contact-head-title">🚀 Obiettivo Drivenode!</span>
+          <button class="contact-x" onclick="closeObiettivo()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div style="padding:20px;max-height:70vh;overflow-y:auto;">
+          <p style="font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">L'hub Auto e Moto</p>
+          <p style="font-size:14.5px;color:var(--txt-dim);line-height:1.7;margin-bottom:14px;">DriveNode è l'hub digitale che connette il mondo auto e moto in Italia in un unico ecosistema vivo, dinamico e in continua evoluzione.</p>
+          <p style="font-size:14.5px;color:var(--txt-dim);line-height:1.7;margin-bottom:14px;">Nasce per unire community, fiere, eventi, appassionati e partner in uno spazio digitale condiviso, dove scoprire raduni, giri consigliati, seguire realtà di riferimento, vivere esperienze interattive e sentirsi parte di una scena vera.</p>
+          <p style="font-size:14.5px;color:var(--txt-dim);line-height:1.7;margin-bottom:14px;">Non è solo una vetrina, ma un punto di incontro tra passione e innovazione: un luogo in cui il mondo dei motori prende forma online e si collega a quello reale, creando connessioni tra persone, territori, eventi e progetti.</p>
+          <p style="font-size:14.5px;color:var(--txt);line-height:1.7;font-weight:600;">DriveNode vuole diventare il nodo centrale di riferimento per chi vive davvero l'universo auto e moto!</p>
+        </div>
+      </div>
+    </div>
 
     <!-- PARTNER -->
     <section class="sec">
@@ -598,6 +626,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
+// ── obiettivo modal ──
+function openObiettivo() {
+  document.getElementById('obiettivo-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeObiettivo() {
+  document.getElementById('obiettivo-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeObiettivoOutside(e) { if (e.target === document.getElementById('obiettivo-overlay')) closeObiettivo(); }
+
 // ── contact card ──
 function openContact() {
   document.getElementById('contact-overlay').classList.add('open');
