@@ -286,6 +286,46 @@
     scrollbar-width:none;
   }
   .det-modal::-webkit-scrollbar{display:none;}
+  /* CONTACT CARD */
+  .contact-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);
+    z-index:400;display:flex;align-items:flex-end;justify-content:center;padding:16px;
+    opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .contact-overlay.open{opacity:1;pointer-events:all;}
+  .contact-card{
+    background:#1c1c1e;border:1px solid rgba(255,255,255,.12);border-radius:20px;
+    width:100%;max-width:380px;overflow:hidden;
+    transform:translateY(40px);transition:transform .22s;
+  }
+  .contact-overlay.open .contact-card{transform:translateY(0);}
+  .contact-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .contact-head-title{font-size:15px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:8px;}
+  .contact-head-title svg{width:16px;height:16px;color:var(--accent);}
+  .contact-x{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;cursor:pointer;border:none;color:var(--txt-dim);}
+  .contact-x:hover{color:var(--txt);}
+  .contact-row{
+    display:flex;align-items:center;gap:14px;
+    padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .contact-icon{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;flex:none;}
+  .contact-icon svg{width:16px;height:16px;color:var(--accent);}
+  .contact-info{flex:1;min-width:0;}
+  .contact-label{font-size:11px;color:var(--txt-faint);letter-spacing:.06em;text-transform:uppercase;margin-bottom:1px;}
+  .contact-value{font-size:14.5px;color:var(--txt);font-weight:500;}
+  .contact-save{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;height:50px;border:none;cursor:pointer;
+    background:var(--accent);color:#fff;
+    font-family:var(--body);font-size:15px;font-weight:700;
+    transition:filter .15s;
+  }
+  .contact-save:hover{filter:brightness(1.1);}
+  .contact-save svg{width:17px;height:17px;}
+
   .det-overlay.open .det-modal{transform:translateY(0);}
   .det-top{
     position:sticky;top:0;z-index:2;
@@ -362,7 +402,7 @@
       <div class="hero-logo-wrap">
         <img src="https://pnydnybcicdvbzpsykcd.supabase.co/storage/v1/object/public/images/logo.png" alt="Drivenode — L'hub del settore Auto e Moto">
       </div>
-      <nav class="socials" style="margin-bottom:10px;">
+      <nav class="socials" style="margin-bottom:10px;margin-top:14px;">
         <a class="soc" href="mailto:info@drivenode.it">
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
           Email
@@ -375,6 +415,10 @@
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           Instagram
         </a>
+        <button class="soc" onclick="openContact()" style="border:1px solid var(--accent-line);background:var(--accent-soft);">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Contatti
+        </button>
       </nav>
     </header>
 
@@ -461,6 +505,41 @@
       <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
     </section>
 
+    <!-- CONTACT CARD -->
+    <div class="contact-overlay" id="contact-overlay" onclick="closeContactOutside(event)">
+      <div class="contact-card">
+        <div class="contact-head">
+          <span class="contact-head-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M8 10h8M8 14h5"/></svg>
+            Contatti
+          </span>
+          <button class="contact-x" onclick="closeContact()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="contact-row">
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+          <div class="contact-info"><div class="contact-label">Nome</div><div class="contact-value">DriveNode</div></div>
+        </div>
+        <a href="tel:+393471957097" class="contact-row" style="text-decoration:none;">
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.15 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.06 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div class="contact-info"><div class="contact-label">Telefono</div><div class="contact-value">3471957097</div></div>
+        </a>
+        <a href="mailto:info@drivenode.it" class="contact-row" style="text-decoration:none;">
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+          <div class="contact-info"><div class="contact-label">Email</div><div class="contact-value">info@drivenode.it</div></div>
+        </a>
+        <a href="https://drivenode.it" target="_blank" class="contact-row" style="text-decoration:none;">
+          <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <div class="contact-info"><div class="contact-label">Sito web</div><div class="contact-value">drivenode.it</div></div>
+        </a>
+        <button class="contact-save" onclick="saveContact()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Salva contatto
+        </button>
+      </div>
+    </div>
+
     <!-- DETAIL MODAL -->
     <div class="det-overlay" id="det-overlay" onclick="closeDetailOutside(event)">
       <div class="det-modal" id="det-modal">
@@ -520,12 +599,33 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
+// ── contact card ──
+function openContact() {
+  document.getElementById('contact-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeContact() {
+  document.getElementById('contact-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeContactOutside(e) { if (e.target === document.getElementById('contact-overlay')) closeContact(); }
+function saveContact() {
+  const vcf = `BEGIN:VCARD\nVERSION:3.0\nFN:DriveNode\nORG:DriveNode\nTEL:+393471957097\nEMAIL:info@drivenode.it\nURL:https://drivenode.it\nEND:VCARD`;
+  const a = document.createElement('a');
+  a.href = 'data:text/vcard;charset=utf-8,' + encodeURIComponent(vcf);
+  a.download = 'DriveNode.vcf';
+  a.click();
+}
+
 // ── detail modal state ──
 let allEvents = [];
+let allGiri = [];
 let detIdx = 0;
+let detType = 'event';
 
-function openDetail(idx) {
+function openDetail(idx, type='event') {
   detIdx = idx;
+  detType = type;
   renderDetail();
   document.getElementById('det-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -536,20 +636,28 @@ function closeDetail() {
 }
 function closeDetailOutside(e) { if (e.target === document.getElementById('det-overlay')) closeDetail(); }
 function navigateDetail(dir) {
-  detIdx = (detIdx + dir + allEvents.length) % allEvents.length;
+  const arr = detType === 'giro' ? allGiri : allEvents;
+  detIdx = (detIdx + dir + arr.length) % arr.length;
   renderDetail();
   document.getElementById('det-modal').scrollTop = 0;
 }
 function renderDetail() {
-  const ev = allEvents[detIdx];
-  document.getElementById('det-city-txt').textContent = ev.city;
+  const arr = detType === 'giro' ? allGiri : allEvents;
+  const ev  = arr[detIdx];
+  const isGiro = detType === 'giro';
+
+  document.getElementById('det-city-txt').textContent = isGiro ? ev.duration : ev.city;
   document.getElementById('det-title').textContent = ev.name;
-  document.getElementById('det-counter').textContent = `${detIdx + 1} / ${allEvents.length}`;
+  document.getElementById('det-counter').textContent = `${detIdx + 1} / ${arr.length}`;
 
   // tags
   const tagsEl = document.getElementById('det-tags');
-  const tagList = [ev.date_text, ...(ev.tags ? ev.tags.split(',').map(t=>t.trim()).filter(Boolean) : [])];
-  tagsEl.innerHTML = tagList.map((t,i) => `<span class="det-tag${i>0?' alt':''}">${t}</span>`).join('');
+  if (isGiro) {
+    tagsEl.innerHTML = `<span class="det-tag">${ev.duration}</span>`;
+  } else {
+    const tagList = [ev.date_text, ...(ev.tags ? ev.tags.split(',').map(t=>t.trim()).filter(Boolean) : [])];
+    tagsEl.innerHTML = tagList.map((t,i) => `<span class="det-tag${i>0?' alt':''}">${t}</span>`).join('');
+  }
 
   // image
   const img = document.getElementById('det-img');
@@ -565,10 +673,17 @@ function renderDetail() {
   if (ev.description) { desc.textContent = ev.description; desc.style.display = 'block'; }
   else { desc.style.display = 'none'; }
 
-  // link
+  // link button
   const link = document.getElementById('det-link');
-  if (ev.url) { link.href = ev.url; link.style.display = 'flex'; }
-  else { link.style.display = 'none'; }
+  if (ev.url) {
+    link.href = ev.url;
+    link.textContent = '';
+    link.innerHTML = (isGiro ? 'Vai al giro' : 'Scopri di più') +
+      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="width:18px;height:18px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+    link.style.display = 'flex';
+  } else {
+    link.style.display = 'none';
+  }
 }
 
 // keyboard navigation
@@ -642,12 +757,12 @@ function eventCard(ev, i) {
     </article>`;
 }
 
-function giroCard(g) {
+function giroCard(g, i) {
   const media = g.image_url
     ? `<img src="${g.image_url}" alt="${g.name}" loading="lazy">`
     : `<div class="giro-placeholder">${roadSVG}</div>`;
   return `
-    <article class="giro">
+    <article class="giro" onclick="openDetail(${i},'giro')" style="cursor:pointer;">
       ${media}
       <div class="giro-shade"></div>
       <div class="giro-info">
@@ -724,8 +839,9 @@ function loadEvents(events) {
 }
 
 function loadGiri(giri) {
+  allGiri = giri;
   const rail = document.getElementById('rail-giri');
-  if (rail) rail.innerHTML = giri.map(giroCard).join('');
+  if (rail) rail.innerHTML = giri.map((g, i) => giroCard(g, i)).join('');
 }
 
 function loadPartners(partners) {

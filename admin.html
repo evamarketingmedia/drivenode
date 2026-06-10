@@ -505,6 +505,14 @@ const FORMS = {
       ${item.image_url ? `<button class="btn btn-ghost btn-sm upload-remove show" id="modal-remove" onclick="removeUpload('modal-prev','modal-remove')">✕ Rimuovi immagine</button>` : `<button class="btn btn-ghost btn-sm upload-remove" id="modal-remove" onclick="removeUpload('modal-prev','modal-remove')">✕ Rimuovi immagine</button>`}
     </div>
     <div class="field-group">
+      <label class="field-label">Descrizione</label>
+      <textarea class="field-input" id="f-desc-long" placeholder="Descrivi il percorso..." style="height:120px;padding-top:12px;resize:vertical;">${item.description||''}</textarea>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Link percorso (es. Google Maps)</label>
+      <input class="field-input" id="f-url" value="${item.url||''}" placeholder="https://maps.google.com/..."/>
+    </div>
+    <div class="field-group">
       <label class="field-label">Ordine visualizzazione</label>
       <input class="field-input" id="f-sort" type="number" value="${item.sort_order||0}" min="0"/>
     </div>
@@ -632,8 +640,10 @@ async function saveItem() {
       payload = {
         name:       document.getElementById('f-name').value.trim(),
         duration:   document.getElementById('f-duration').value.trim(),
-        sort_order: parseInt(document.getElementById('f-sort').value) || 0,
-        active:     document.getElementById('f-active').checked,
+        sort_order:  parseInt(document.getElementById('f-sort').value) || 0,
+        description: document.getElementById('f-desc-long').value.trim() || null,
+        url:         document.getElementById('f-url').value.trim() || null,
+        active:      document.getElementById('f-active').checked,
       };
     } else {
       payload = {
