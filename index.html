@@ -478,6 +478,10 @@
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--txt-faint);opacity:.3;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
           </div>
           <p class="det-desc" id="det-desc"></p>
+          <a id="det-link" href="#" target="_blank" rel="noopener" class="btn" style="margin-top:20px;display:none;">
+            Scopri di più
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
         </div>
         <div class="det-nav">
           <button class="det-nav-btn" onclick="navigateDetail(-1)">
@@ -560,6 +564,11 @@ function renderDetail() {
   const desc = document.getElementById('det-desc');
   if (ev.description) { desc.textContent = ev.description; desc.style.display = 'block'; }
   else { desc.style.display = 'none'; }
+
+  // link
+  const link = document.getElementById('det-link');
+  if (ev.url) { link.href = ev.url; link.style.display = 'flex'; }
+  else { link.style.display = 'none'; }
 }
 
 // keyboard navigation
