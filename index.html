@@ -514,7 +514,6 @@
     <section class="sec">
       <div class="sec-head">
         <div class="kicker">Contatti &amp; collaborazioni</div>
-        <h2 class="sec-title">Nato da una<br/>collaborazione</h2>
       </div>
       <div class="partners" id="partners-list">
         <!-- populated by JS -->
@@ -763,8 +762,9 @@ const STATIC_GIRI = [
 ];
 
 const STATIC_PARTNERS = [
-  { tag:'Innovation', name:'So-Synergy',  description:'Stampa 3D, NFC & hub digitali', logo_url:null },
-  { tag:'Community',  name:'Desmoblood', description:'Ducati lover',                   logo_url:null },
+  { tag:'Community',  name:'Desmoblood',  description:'Ducati lover',                        logo_url:null, url:'https://desmoblood.com' },
+  { tag:'Software',   name:'Elatos',      description:'Software gestionale',                 logo_url:null, url:'https://elatos.net/software-gestionale-index.html' },
+  { tag:'Partner',    name:'Biluxtech',   description:'',                                    logo_url:null, url:null },
 ];
 
 // ── svg icons ──
@@ -814,15 +814,16 @@ function partnerCard(p) {
   const logo = p.logo_url
     ? `<img src="${p.logo_url}" alt="${p.name}">`
     : `<svg style="width:28px;height:28px;color:var(--txt-faint);opacity:.4;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>`;
-  return `
-    <div class="pcard">
+  const inner = `
       <div class="logo">${logo}</div>
       <div>
         <div class="meta-tag">${p.tag}</div>
         <div class="pname">${p.name}</div>
-        <div class="pdesc">${p.description}</div>
-      </div>
-    </div>`;
+        ${p.description ? `<div class="pdesc">${p.description}</div>` : ''}
+      </div>`;
+  return p.url
+    ? `<a class="pcard" href="${p.url}" target="_blank" rel="noopener">${inner}</a>`
+    : `<div class="pcard">${inner}</div>`;
 }
 
 function renderSkeletons(railId, count) {

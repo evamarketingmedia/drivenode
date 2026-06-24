@@ -344,12 +344,17 @@ async function doLogin() {
   err.style.display = 'none';
   btn.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
+  // local password fallback
+  if (typeof ADMIN_PASSWORD !== 'undefined' && pass === ADMIN_PASSWORD) {
+    showApp();
+    return;
+  }
   try {
     const { error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) throw error;
     showApp();
   } catch(e) {
-    err.textContent = e.message || 'Errore di accesso.';
+    err.textContent = 'Password errata.';
     err.style.display = 'block';
     btn.innerHTML = 'Accedi';
     btn.disabled = false;
