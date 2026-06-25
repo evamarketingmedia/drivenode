@@ -256,8 +256,8 @@
     padding:14px;transition:border-color .18s;
   }
   .pcard:hover{border-color:var(--accent-line);}
-  .pcard .logo{width:64px;height:64px;border-radius:12px;overflow:hidden;flex:none;border:1px solid var(--line);background:var(--surface-2);display:flex;align-items:center;justify-content:center;}
-  .pcard .logo img{width:100%;height:100%;object-fit:cover;}
+  .pcard .logo{width:64px;height:64px;border-radius:12px;overflow:hidden;flex:none;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;padding:7px;}
+  .pcard .logo img{width:100%;height:100%;object-fit:contain;object-position:center;}
   .pcard .meta-tag{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);}
   .pcard .pname{font-family:var(--head);font-weight:700;text-transform:uppercase;font-size:20px;line-height:1;margin:3px 0 4px;}
   .pcard .pdesc{font-size:12.5px;color:var(--txt-dim);letter-spacing:.04em;}
@@ -404,6 +404,20 @@
     transition:border-color .18s;
   }
   .signup-input:focus{border-color:var(--accent-line);}
+  .hub-form{padding:18px 16px 16px;display:grid;gap:12px;}
+  .hub-form-title{
+    font-family:var(--head);font-weight:800;text-transform:uppercase;
+    font-size:25px;line-height:1;margin-bottom:2px;
+  }
+  .hub-form-sub{font-size:13px;color:var(--txt-dim);line-height:1.5;margin-bottom:6px;}
+  .hub-field{display:grid;gap:6px;}
+  .hub-label{
+    font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--txt-dim);
+  }
+  .hub-submit-msg{font-size:13px;min-height:18px;color:var(--txt-dim);}
+  .hub-submit-msg.ok{color:#22c55e;}
+  .hub-submit-msg.err{color:#ef4444;}
 </style>
 </head>
 <body>
@@ -525,11 +539,50 @@
       <span class="cta-tag"><span class="dot"></span>Resta connesso</span>
       <h2 class="cta-title">Entra nell'hub.</h2>
       <p style="color:var(--txt-dim);font-size:14.5px;margin-bottom:22px;max-width:38ch;">Iscriviti per ricevere eventi, raduni e i prossimi giri direttamente — niente spam, solo motori.</p>
-      <a class="btn" href="https://tally.so/r/obzvvP" target="_blank" rel="noopener">
+      <button class="btn" type="button" onclick="openHubSignup()">
         Iscriviti ora
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
+      </button>
     </section>
+
+    <!-- HUB SIGNUP -->
+    <div class="contact-overlay" id="hub-signup-overlay" onclick="closeHubSignupOutside(event)">
+      <div class="contact-card" style="max-width:420px;">
+        <div class="contact-head">
+          <span class="contact-head-title">Inserisci i tuoi dati</span>
+          <button class="contact-x" type="button" onclick="closeHubSignup()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <form class="hub-form" id="hub-signup-form" onsubmit="submitHubSignup(event)">
+          <div>
+            <h3 class="hub-form-title">Entra nell'hub</h3>
+            <p class="hub-form-sub">Lasciaci i tuoi dati per ricevere aggiornamenti su eventi, raduni e prossimi giri.</p>
+          </div>
+          <label class="hub-field">
+            <span class="hub-label">Nome *</span>
+            <input class="signup-input" id="hub-first-name" name="first_name" autocomplete="given-name" required>
+          </label>
+          <label class="hub-field">
+            <span class="hub-label">Cognome *</span>
+            <input class="signup-input" id="hub-last-name" name="last_name" autocomplete="family-name" required>
+          </label>
+          <label class="hub-field">
+            <span class="hub-label">Team</span>
+            <input class="signup-input" id="hub-team" name="team" autocomplete="organization">
+          </label>
+          <label class="hub-field">
+            <span class="hub-label">Email *</span>
+            <input class="signup-input" id="hub-email" name="email" type="email" autocomplete="email" required>
+          </label>
+          <p class="hub-submit-msg" id="hub-submit-msg"></p>
+          <button class="btn" id="hub-submit-btn" type="submit">
+            Invia dati
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
 
     <!-- CONTACT CARD -->
     <div class="contact-overlay" id="contact-overlay" onclick="closeContactOutside(event)">
@@ -762,9 +815,15 @@ const STATIC_GIRI = [
 ];
 
 const STATIC_PARTNERS = [
-  { tag:'Community',  name:'Desmoblood',  description:'Ducati lover',                        logo_url:null, url:'https://desmoblood.com' },
-  { tag:'Software',   name:'Elatos',      description:'Software gestionale',                 logo_url:null, url:'https://elatos.net/software-gestionale-index.html' },
-  { tag:'Partner',    name:'Biluxtech',   description:'',                                    logo_url:null, url:null },
+  { tag:'Community',  name:'Desmoblood',  description:'Ducati lover',                        logo_url:'assets/desmoblood.jpeg', url:'https://desmoblood.com' },
+  { tag:'Software',   name:'Elatos',      description:'Software gestionale',                 logo_url:'assets/elatos.png', url:'https://elatos.net/software-gestionale-index.html' },
+  { tag:'Partner',    name:'Bilux Tech',  description:'',                                    logo_url:'assets/bilux.svg', url:'https://biluxtech.com' },
+];
+
+const PARTNER_DEFAULTS = [
+  { match:/desmoblood/i, logo_url:'assets/desmoblood.jpeg', url:'https://desmoblood.com' },
+  { match:/elatos/i, logo_url:'assets/elatos.png', url:'https://elatos.net/software-gestionale-index.html' },
+  { match:/bilux/i, logo_url:'assets/bilux.svg', url:'https://biluxtech.com' },
 ];
 
 // ── svg icons ──
@@ -885,7 +944,11 @@ function loadGiri(giri) {
 
 function loadPartners(partners) {
   const list = document.getElementById('partners-list');
-  if (list) list.innerHTML = partners.map(partnerCard).join('');
+  const normalized = partners.map(p => {
+    const defaults = PARTNER_DEFAULTS.find(d => d.match.test(p.name || ''));
+    return defaults ? { ...p, logo_url:p.logo_url || defaults.logo_url, url:p.url || defaults.url } : p;
+  });
+  if (list) list.innerHTML = normalized.map(partnerCard).join('');
 }
 
 function applyCfg(cfg) {
@@ -896,9 +959,66 @@ function applyCfg(cfg) {
   if (cfg.raduno_date)    document.querySelectorAll('.cta-where b')[0].textContent = cfg.raduno_date;
   if (cfg.raduno_place)   document.querySelectorAll('.cta-where span')[1].textContent = cfg.raduno_place;
   if (cfg.raduno_title)   document.querySelector('.cta-title').innerHTML = cfg.raduno_title.replace('\\n','<br/>');
+  if (cfg.raduno_visible === false) {
+    const cta = document.getElementById('cta-raduno');
+    if (cta) cta.style.display = 'none';
+  }
 }
 
-// iscrizioni gestite da Tally.so
+let hubClient = null;
+
+function getHubClient() {
+  if (!hubClient && typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+    hubClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return hubClient;
+}
+
+function openHubSignup() {
+  document.getElementById('hub-signup-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeHubSignup() {
+  document.getElementById('hub-signup-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeHubSignupOutside(e) {
+  if (e.target === document.getElementById('hub-signup-overlay')) closeHubSignup();
+}
+async function submitHubSignup(e) {
+  e.preventDefault();
+  const client = getHubClient();
+  const btn = document.getElementById('hub-submit-btn');
+  const msg = document.getElementById('hub-submit-msg');
+  msg.className = 'hub-submit-msg';
+  msg.textContent = '';
+  btn.disabled = true;
+  btn.innerHTML = 'Invio...';
+
+  try {
+    if (!client) throw new Error('Supabase non configurato.');
+    const payload = {
+      first_name: document.getElementById('hub-first-name').value.trim(),
+      last_name: document.getElementById('hub-last-name').value.trim(),
+      team: document.getElementById('hub-team').value.trim() || null,
+      email: document.getElementById('hub-email').value.trim(),
+      source: 'hub',
+    };
+    const { error } = await client.from('hub_subscribers').insert(payload);
+    if (error) throw error;
+    document.getElementById('hub-signup-form').reset();
+    msg.textContent = 'Grazie, iscrizione ricevuta.';
+    msg.classList.add('ok');
+    setTimeout(closeHubSignup, 900);
+  } catch(err) {
+    msg.textContent = 'Non riesco a salvare i dati. Riprova tra poco.';
+    msg.classList.add('err');
+    console.warn('Hub signup error', err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Invia dati <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  }
+}
 
 init();
 </script>

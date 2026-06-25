@@ -286,6 +286,14 @@
           <label class="field-label">Titolo raduno</label>
           <input class="field-input" id="cfg-title" placeholder="es. Ci vediamo\nin pista."/>
         </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Mostra il quadrante del raduno sul sito</span>
+          <label class="toggle">
+            <input type="checkbox" id="cfg-raduno-visible" checked/>
+            <div class="toggle-track"></div>
+            <div class="toggle-thumb"></div>
+          </label>
+        </div>
       </div>
       <div class="config-box">
         <h3>Avatar / Logo hero</h3>
@@ -546,6 +554,10 @@ const FORMS = {
       </div>
     </div>
     <div class="field-group">
+      <label class="field-label">Link partner</label>
+      <input class="field-input" id="f-url" value="${item.url||''}" placeholder="https://..."/>
+    </div>
+    <div class="field-group">
       <label class="field-label">Logo partner</label>
       <div class="upload-zone" id="modal-upload-zone">
         <input type="file" accept="image/*" onchange="previewUpload(this,'modal-prev','modal-remove')"/>
@@ -655,6 +667,7 @@ async function saveItem() {
         name:   document.getElementById('f-name').value.trim(),
         tag:    document.getElementById('f-tag').value.trim(),
         description: document.getElementById('f-desc').value.trim(),
+        url: document.getElementById('f-url').value.trim() || null,
         active: document.getElementById('f-active').checked,
       };
     }
@@ -699,6 +712,7 @@ async function loadConfig() {
   if (data.raduno_date)  document.getElementById('cfg-date').value  = data.raduno_date;
   if (data.raduno_place) document.getElementById('cfg-place').value = data.raduno_place;
   if (data.raduno_title) document.getElementById('cfg-title').value = data.raduno_title;
+  document.getElementById('cfg-raduno-visible').checked = data.raduno_visible !== false;
   if (data.avatar_url) {
     const prev = document.getElementById('prev-avatar');
     if (prev) { prev.src = data.avatar_url; prev.classList.add('show'); }
@@ -718,6 +732,7 @@ async function saveConfig() {
     raduno_date:  document.getElementById('cfg-date').value.trim(),
     raduno_place: document.getElementById('cfg-place').value.trim(),
     raduno_title: document.getElementById('cfg-title').value.trim(),
+    raduno_visible: document.getElementById('cfg-raduno-visible').checked,
   };
   if (avatarUrl) payload.avatar_url = avatarUrl;
 

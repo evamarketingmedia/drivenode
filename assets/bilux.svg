@@ -1,0 +1,44 @@
+<svg width="1080" height="1080" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00FFFF"/>
+      <stop offset="100%" stop-color="#0066FF"/>
+    </linearGradient>
+    <linearGradient id="beamGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0066FF"/>
+      <stop offset="100%" stop-color="#00FFFF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0066FF" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0066FF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- background -->
+  <rect width="1080" height="1080" fill="#101114"/>
+
+  <!-- ambient glow -->
+  <circle cx="540" cy="540" r="420" fill="url(#glow)"/>
+
+  <!-- mark: two crossing light beams forming "BI" duality + "LUX" light -->
+  <g filter="url(#softGlow)">
+    <rect x="-90" y="495" width="1260" height="90" rx="45"
+          fill="url(#beamGrad)"
+          transform="rotate(35 540 540)"/>
+    <rect x="-90" y="495" width="1260" height="90" rx="45"
+          fill="url(#beamGrad2)"
+          transform="rotate(-35 540 540)"/>
+  </g>
+
+  <!-- center node -->
+  <circle cx="540" cy="540" r="26" fill="#101114"/>
+  <circle cx="540" cy="540" r="14" fill="#F4F1E9"/>
+  <circle cx="540" cy="540" r="14" fill="#F4F1E9" filter="url(#softGlow)"/>
+</svg>
