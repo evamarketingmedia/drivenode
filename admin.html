@@ -79,6 +79,8 @@
     display:flex;align-items:center;justify-content:center;
   }
   .card-thumb img{width:100%;height:100%;object-fit:cover;}
+  .card-thumb.partner-thumb{background:#fff;padding:6px;}
+  .card-thumb.partner-thumb img{object-fit:contain;}
   .card-body{flex:1;min-width:0;}
   .card-title{font-family:var(--head);font-weight:700;font-size:17px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .card-meta{font-size:12px;color:var(--txt-dim);margin-top:2px;}
@@ -228,7 +230,7 @@
     <div class="tabs">
       <div class="tab active" onclick="switchTab('eventi',this)">🗓 Eventi</div>
       <div class="tab" onclick="switchTab('giri',this)">🛣 Giri</div>
-      <div class="tab" onclick="switchTab('partner',this)">🤝 Partner</div>
+      <div class="tab" onclick="switchTab('partner',this)">🤝 Contatti</div>
       <div class="tab" onclick="switchTab('config',this)">⚙️ Impostazioni</div>
     </div>
 
@@ -259,10 +261,10 @@
     <!-- PARTNER TAB -->
     <div id="tab-partner" style="display:none;">
       <div class="sec-row">
-        <span class="sec-label">Partner</span>
+        <span class="sec-label">Contatti &amp; collaborazioni</span>
         <button class="btn btn-primary btn-sm" onclick="openModal('partner')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-          Aggiungi partner
+          Aggiungi contatto
         </button>
       </div>
       <div class="cards" id="partner-list"></div>
@@ -417,8 +419,9 @@ async function loadTab(tab) {
 
 // ── card rendering ──
 function renderCard(tab, item) {
-  const thumb = item.image_url
-    ? `<img src="${item.image_url}" alt="">`
+  const mediaUrl = tab === 'partner' ? item.logo_url : item.image_url;
+  const thumb = mediaUrl
+    ? `<img src="${mediaUrl}" alt="">`
     : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--txt-faint);opacity:.4;"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`;
   let title='', meta='';
   if (tab==='eventi') { title=item.name; meta=`${item.city} · ${item.date_text}`; }
@@ -428,7 +431,7 @@ function renderCard(tab, item) {
   const activeColor = item.active ? 'var(--green)' : 'var(--txt-faint)';
   return `
     <div class="card" id="card-${item.id}">
-      <div class="card-thumb">${thumb}</div>
+      <div class="card-thumb${tab === 'partner' ? ' partner-thumb' : ''}">${thumb}</div>
       <div class="card-body">
         <div class="card-title">${title}</div>
         <div class="card-meta" style="color:${activeColor};">${item.active ? '● Visibile' : '○ Nascosto'} · ${meta}</div>
@@ -540,8 +543,8 @@ const FORMS = {
 
   partner: (item={}) => `
     <div class="field-group">
-      <label class="field-label">Nome partner *</label>
-      <input class="field-input" id="f-name" value="${item.name||''}" placeholder="es. So-Synergy"/>
+      <label class="field-label">Nome contatto / collaborazione *</label>
+      <input class="field-input" id="f-name" value="${item.name||''}" placeholder="es. Bilux Tech"/>
     </div>
     <div class="field-row">
       <div class="field-group">
@@ -554,11 +557,11 @@ const FORMS = {
       </div>
     </div>
     <div class="field-group">
-      <label class="field-label">Link partner</label>
+      <label class="field-label">Link contatto / collaborazione</label>
       <input class="field-input" id="f-url" value="${item.url||''}" placeholder="https://..."/>
     </div>
     <div class="field-group">
-      <label class="field-label">Logo partner</label>
+      <label class="field-label">Logo contatto / collaborazione</label>
       <div class="upload-zone" id="modal-upload-zone">
         <input type="file" accept="image/*" onchange="previewUpload(this,'modal-prev','modal-remove')"/>
         <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V8m-4 4 4-4 4 4"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
@@ -578,7 +581,7 @@ const FORMS = {
 };
 
 function openModal(type, item={}) {
-  const titles = { eventi:'Evento', giri:'Giro', partner:'Partner' };
+  const titles = { eventi:'Evento', giri:'Giro', partner:'Contatto' };
   editingType = type;
   editingId   = item.id || null;
   pendingFile = null;
